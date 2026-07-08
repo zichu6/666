@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SM4 ECB 解密工具</title>
+<script src="https://cdn.jsdelivr.net/npm/sm-crypto@0.3.2/dist/sm4.js"></script>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";padding:20px}
+textarea,input{width:100%;margin:8px 0;padding:10px;box-sizing:border-box}
+button{padding:10px 20px}
+pre{white-space:pre-wrap;background:#f5f5f5;padding:10px}
+</style>
+</head>
+<body>
+<h2>SM4-ECB Base64 解密</h2>
+<p>参数：SM4 / ECB / PKCS7</p>
+
+<label>密钥</label>
+<input id="key" value="pacs202508121830">
+
+<label>Base64密文</label>
+<textarea id="cipher" rows="10"></textarea>
+
+<button onclick="decode()">解密</button>
+
+<pre id="out"></pre>
+
+<script>
+function pkcs7Unpad(bytes){
+  let p=bytes[bytes.length-1];
+  return bytes.slice(0, bytes.length-p);
+}
+function decode(){
+  try{
+    let key=document.getElementById('key').value;
+    let c=document.getElementById('cipher').value.trim();
+    let hex=Array.from(atob(c)).map(x=>('0'+x.charCodeAt(0).toString(16)).slice(-2)).join('');
+    let res=SM4.decrypt(hex,key,{mode:'ecb',padding:'pkcs#7'});
+    document.getElementById('out').textContent=res;
+  }catch(e){
+    document.getElementById('out').textContent='解密失败: '+e;
+  }
+}
+</script>
+</body>
+</html>
